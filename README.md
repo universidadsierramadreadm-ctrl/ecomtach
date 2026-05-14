@@ -1,4 +1,6 @@
 # ECOMATCH — Backend API Documentation
+# integrantes -Susan Montserrat Mendez Vargas, -Diego Antonio Leon Jimenez, -Jose Fernando Marin Cordova
+
 
 ## 🚀 Descripción
 Backend profesional para ECOMATCH, plataforma de comercio electrónico para materiales reciclables. Desarrollado con Node.js, Express y MySQL siguiendo arquitectura MVC.
