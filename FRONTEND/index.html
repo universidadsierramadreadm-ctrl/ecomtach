@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ECOMATCH — Conectando Residuos y Recursos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════ NAVBAR ═══════════════════════════ -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <div class="nav-logo">
+        <div class="logo-icon">
+          <img src="assets/images/logo.png" alt="ECOMATCH Logo" width="230" height="160" />
+        </div>
+      </div>
+
+      <ul class="nav-links">
+        <li><a href="#inicio">Inicio</a></li>
+        <li><a href="#materiales">Materiales</a></li>
+        <li><a href="#como-funciona">Cómo funciona</a></li>
+        <li><a href="#empresas">Empresas</a></li>
+        <li><a href="#vip">Plan VIP</a></li>
+        <li><a href="#nosotros">Nosotros</a></li>
+        <li><a href="#contacto">Contacto</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a href="#dashboard" id="dashboardButton" class="btn-ghost" style="display:none;">Mi panel</a>
+        <button type="button" id="logoutButton" class="btn-ghost" style="display:none;">Cerrar sesión</button>
+        <a href="#login" id="loginNavButton" class="btn-ghost">Iniciar sesión</a>
+        <a href="#registro" id="registerNavButton" class="btn-primary">Registrarse</a>
+      </div>
+
+      <button class="nav-toggle" id="navToggle" aria-label="Menú">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="nav-mobile" id="navMobile">
+      <ul>
+        <li><a href="#inicio">Inicio</a></li>
+        <li><a href="#materiales">Materiales</a></li>
+        <li><a href="#como-funciona">Cómo funciona</a></li>
+        <li><a href="#empresas">Empresas</a></li>
+        <li><a href="#vip">Plan VIP</a></li>
+        <li><a href="#nosotros">Nosotros</a></li>
+        <li><a href="#contacto">Contacto</a></li>
+        <li><a href="#login" class="btn-ghost" style="display:inline-block;margin-top:8px;">Iniciar sesión</a></li>
+        <li><a href="#registro" class="btn-primary" style="display:inline-block;margin-top:8px;">Registrarse</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ═══════════════════════════ HERO ═══════════════════════════ -->
+  <section class="hero" id="inicio">
+    <div class="hero-bg">
+      <div class="hero-orb orb-1"></div>
+      <div class="hero-orb orb-2"></div>
+      <div class="hero-grid"></div>
+    </div>
+    <div class="hero-container">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        Plataforma B2B de Reciclaje Industrial en México
+      </div>
+      <h1 class="hero-title">
+        Conecta tus <span class="hero-highlight">residuos</span><br/>
+        con quien los <span class="hero-highlight">necesita</span>
+      </h1>
+      <p class="hero-subtitle">
+        ECOMATCH es el marketplace profesional que conecta vendedores de materiales reciclables con industrias compradoras en toda la República Mexicana. Rápido, seguro y sustentable.
+      </p>
+      <div class="hero-cta">
+        <a href="#registro" class="btn-hero-primary">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+          Publicar Material
+        </a>
+        <a href="#materiales" class="btn-hero-secondary">
+          Explorar Materiales
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <span class="stat-number" data-target="4800">0</span><span class="stat-suffix">+</span>
+          <span class="stat-label">Toneladas recicladas</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-number" data-target="320">0</span><span class="stat-suffix">+</span>
+          <span class="stat-label">Empresas activas</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-number" data-target="31">0</span>
+          <span class="stat-label">Estados cubiertos</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="eco-card floating">
+        <div class="eco-card-icon">♻️</div>
+        <div class="eco-card-info">
+          <span class="eco-card-title">PET — Jalisco</span>
+          <span class="eco-card-sub">500 kg disponibles</span>
+        </div>
+        <span class="eco-card-price">$4.50/kg</span>
+      </div>
+      <div class="eco-card floating delay-1">
+        <div class="eco-card-icon">🏭</div>
+        <div class="eco-card-info">
+          <span class="eco-card-title">Aluminio — CDMX</span>
+          <span class="eco-card-sub">2 toneladas listas</span>
+        </div>
+        <span class="eco-card-price">$18.00/kg</span>
+      </div>
+      <div class="eco-card floating delay-2">
+        <div class="eco-card-icon">📦</div>
+        <div class="eco-card-info">
+          <span class="eco-card-title">Cartón — NL</span>
+          <span class="eco-card-sub">1.2 ton disponibles</span>
+        </div>
+        <span class="eco-card-price">$2.80/kg</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════ DASHBOARD DE USUARIO ═══════════════════════════ -->
+  <section class="section" id="dashboard" style="display:none;">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Dashboard</span>
+        <h2 class="section-title">Panel de control</h2>
+        <p class="section-desc">Accede a tus datos, publicaciones y estado VIP.</p>
+      </div>
+      <div class="dashboard-grid">
+        <div class="dashboard-card">
+          <h3 id="dashboardWelcome">Hola, usuario</h3>
+          <p id="dashboardRole">Tipo de cuenta: ---</p>
+          <p id="dashboardVip" class="dashboard-status">Estado VIP: ---</p>
+          <div class="dashboard-actions">
+            <a href="#materiales" class="btn-outline">Explorar materiales</a>
+            <a href="#registro" class="btn-primary" style="display:none;" id="dashboardRegisterCall">Publicar mi material</a>
+          </div>
+        </div>
+        <div class="dashboard-card dashboard-stats">
+          <div class="dashboard-stat">
+            <span class="stat-number" id="dashboardPublicaciones">0</span>
+            <span class="stat-label">Publicaciones activas</span>
+          </div>
+          <div class="dashboard-stat">
+            <span class="stat-number" id="dashboardCompras">0</span>
+            <span class="stat-label">Solicitudes recibidas</span>
+          </div>
+          <div class="dashboard-stat">
+            <span class="stat-number" id="dashboardAhorro">0</span>
+            <span class="stat-label">Red de empresas</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════ MATERIALES DESTACADOS ═══════════════════════════ -->
+  <section class="section" id="materiales">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Catálogo</span>
+        <h2 class="section-title">Materiales disponibles ahora</h2>
+        <p class="section-desc">Encuentra materiales reciclables verificados de proveedores en todo México</p>
+      </div>
+
+      <div class="filters-bar">
+        <button class="filter-btn active" data-filter="all">Todos</button>
+        <button class="filter-btn" data-filter="plastico">Plástico / PET</button>
+        <button class="filter-btn" data-filter="metal">Metal / Acero</button>
+        <button class="filter-btn" data-filter="papel">Papel / Cartón</button>
+        <button class="filter-btn" data-filter="vidrio">Vidrio</button>
+        <button class="filter-btn" data-filter="electronico">Electrónicos</button>
+      </div>
+
+      <div class="materials-grid" id="materialsGrid">
+        <!-- Cards generadas por JS -->
+      </div>
+
+      <div class="section-cta">
+        <a href="#registro" class="btn-outline">Ver todos los materiales →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════ CÓMO FUNCIONA ═══════════════════════════ -->
+  <section class="section section-dark" id="como-funciona">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag light">Proceso</span>
+        <h2 class="section-title light">¿Cómo funciona ECOMATCH?</h2>
+        <p class="section-desc light">En 4 pasos conectamos residuos con recursos</p>
+      </div>
+
+      <div class="steps-grid">
+        <div class="step-card" data-step="1">
+          <div class="step-number">01</div>
+          <div class="step-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <h3>Regístrate gratis</h3>
+          <p>Crea tu cuenta como vendedor o comprador. Verifica tu empresa y accede al marketplace en minutos.</p>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step-card" data-step="2">
+          <div class="step-number">02</div>
+          <div class="step-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+          </div>
+          <h3>Publica o busca material</h3>
+          <p>Vendedores publican con fotos, cantidad y precio. Compradores filtran por estado, tipo y precio.</p>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step-card" data-step="3">
+          <div class="step-number">03</div>
+          <div class="step-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <h3>Negocia en tiempo real</h3>
+          <p>Chat integrado para negociar precios, cantidades y logística directamente entre las partes.</p>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step-card" data-step="4">
+          <div class="step-number">04</div>
+          <div class="step-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+          <h3>Cierra y recicla</h3>
+          <p>ECOMATCH cobra solo 10% de comisión al cerrar la venta. Sin costos ocultos, sin IVA intermediado.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════ EMPRESAS VERIFICADAS ═══════════════════════════ -->
+  <section class="section" id="empresas">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Red de confianza</span>
+        <h2 class="section-title">Empresas verificadas en nuestra red</h2>
+        <p class="section-desc">Más de 320 industrias y centros de reciclaje verificados en toda la República</p>
+      </div>
+
+      <div class="companies-strip">
+        <div class="companies-track">
+          <div class="company-logo">ReciclaMax</div>
+          <div class="company-logo">InduMetal SA</div>
+          <div class="company-logo">GreenPET MX</div>
+          <div class="company-logo">EcoAluminio</div>
+          <div class="company-logo">PapelVerde</div>
+          <div class="company-logo">VidrioCorp</div>
+          <div class="company-logo">ChatarraPlus</div>
+          <div class="company-logo">TechRecycle</div>
+          <div class="company-logo">ReciclaMax</div>
+          <div class="company-logo">InduMetal SA</div>
+          <div class="company-logo">GreenPET MX</div>
+          <div class="company-logo">EcoAluminio</div>
+        </div>
+      </div>
+
+      <div class="benefits-grid">
+        <div class="benefit-card">
+          <div class="benefit-icon green">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <h4>Empresas verificadas</h4>
+          <p>Validamos RFC, CURP y documentos legales de cada empresa antes de activar su cuenta.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon blue">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h4>Transacciones seguras</h4>
+          <p>Sistema de reputación, calificaciones y protección antifraude en cada operación.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon teal">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <h4>Respuesta en minutos</h4>
+          <p>Chat en tiempo real y notificaciones instantáneas para acelerar cada negociación.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon amber">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <h4>Solo 10% de comisión</h4>
+          <p>Sin mensualidades ocultas. Pagas únicamente cuando cierras una venta exitosa.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════ MAPA / COBERTURA ═══════════════════════════ -->
+  <section class="section section-accent">
+    <div class="container">
+      <div class="coverage-layout">
+        <div class="coverage-text">
+          <span class="section-tag">Cobertura nacional</span>
+          <h2 class="section-title">Presente en los 31 estados y CDMX</h2>
+          <p>Nuestra red conecta vendedores y compradores en toda la República Mexicana. Geolocalización integrada para encontrar materiales cerca de tu operación.</p>
+          <ul class="coverage-list">
+            <li>📍 CDMX · Jalisco · Nuevo León</li>
+            <li>📍 Guanajuato · Querétaro · Puebla</li>
+            <li>📍 Veracruz · Yucatán · Sonora</li>
+            <li>📍 Y todos los estados restantes</li>
+          </ul>
+          <a href="#registro" class="btn-primary" style="margin-top:24px;display:inline-block;">Buscar en mi zona →</a>
+        </div>
+        <div class="coverage-map">
+          <div class="map-placeholder">
+            <svg viewBox="0 0 400 300" width="100%" style="opacity:0.15;position:absolute;top:0;left:0;">
+              <ellipse cx="200" cy="150" rx="190" ry="140" fill="none" stroke="#2ECC71" stroke-width="1" stroke-dasharray="4,4"/>
+            </svg>
+            <div class="map-dots">
+              <span class="map-dot" style="top:35%;left:45%;" title="CDMX"></span>
+              <span class="map-dot" style="top:30%;left:30%;" title="Jalisco"></span>
+              <span class="map-dot" style="top:20%;left:55%;" title="Nuevo León"></span>
+              <span class="map-dot" style="top:50%;left:50%;" title="Puebla"></span>
+              <span class="map-dot" style="top:25%;left:40%;" title="Guanajuato"></span>
+              <span class="map-dot pulse" style="top:38%;left:38%;" title="Activo"></span>
+              <span class="map-dot pulse" style="top:22%;left:58%;" title="Activo"></span>
+              <span class="map-dot pulse" style="top:55%;left:65%;" title="Activo"></span>
+            </div>
+            <p class="map-label">Mapa interactivo disponible al iniciar sesión</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════ PLAN VIP ═══════════════════════════ -->
+  <section class="section" id="vip">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag vip">★ Exclusivo</span>
+        <h2 class="section-title">Plan VIP para Vendedores</h2>
+        <p class="section-desc">Maximiza tus ventas con beneficios premium y comisión reducida</p>
+      </div>
+
+      <div class="vip-grid">
+        <!-- Estándar -->
+        <div class="plan-card">
+          <div class="plan-header">
+            <h3>Estándar</h3>
+            <div class="plan-price">Gratis</div>
+            <p>Para comenzar a vender</p>
+          </div>
+          <ul class="plan-features">
+            <li class="check">Publicación de materiales</li>
+            <li class="check">Chat con compradores</li>
+            <li class="check">Panel básico</li>
+            <li class="check">Soporte estándar</li>
+            <li class="cross">Comisión: 10%</li>
+            <li class="cross">Sin publicación destacada</li>
+            <li class="cross">Sin estadísticas avanzadas</li>
+          </ul>
+          <a href="#registro" class="btn-outline">Comenzar gratis</a>
+        </div>
+
+        <!-- VIP Mensual -->
+        <div class="plan-card plan-vip">
+          <div class="plan-badge">⭐ Más popular</div>
+          <div class="plan-header">
+            <h3>VIP Mensual</h3>
+            <div class="plan-price">$499 <span>/mes</span></div>
+            <p>Para vendedores activos</p>
+          </div>
+          <ul class="plan-features">
+            <li class="check vip-check">Comisión reducida al <strong>6%</strong></li>
+            <li class="check vip-check">Publicaciones destacadas</li>
+            <li class="check vip-check">Prioridad en búsquedas</li>
+            <li class="check vip-check">Etiqueta "Proveedor VIP"</li>
+            <li class="check vip-check">Soporte prioritario 24/7</li>
+            <li class="check vip-check">Estadísticas avanzadas</li>
+            <li class="check vip-check">Recomendaciones automáticas</li>
+          </ul>
+          <a href="#registro" class="btn-vip">Activar VIP Mensual</a>
+        </div>
+
+        <!-- VIP Anual -->
+        <div class="plan-card plan-anual">
+          <div class="plan-badge anual">💎 Mejor precio</div>
+          <div class="plan-header">
+            <h3>VIP Anual</h3>
+            <div class="plan-price">$399 <span>/mes</span></div>
+            <p>Facturado anualmente — Ahorra 20%</p>
+          </div>
+          <ul class="plan-features">
+            <li class="check vip-check">Todo lo del plan Mensual</li>
+            <li class="check vip-check">Perfil empresarial premium</li>
+            <li class="check vip-check">Integración API empresarial</li>
+            <li class="check vip-check">Gestor de cuenta dedicado</li>
+            <li class="check vip-check">Reportes mensuales</li>
+            <li class="check vip-check">Acceso anticipado a novedades</li>
+            <li class="check vip-check">Certificado ecológico digital</li>
+          </ul>
+          <a href="#registro" class="btn-outline-dark">Activar VIP Anual</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════ TESTIMONIOS ═══════════════════════════ -->
+  <section class="section section-dark" id="nosotros">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag light">Testimonios</span>
+        <h2 class="section-title light">Lo que dicen nuestros usuarios</h2>
+      </div>
+      <div class="testimonials-grid">
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p>"ECOMATCH cambió completamente cómo vendemos nuestro PET. Antes tardábamos semanas en encontrar comprador, ahora en días."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar" style="background:#2ECC71;">MR</div>
+            <div>
+              <strong>Miguel Rodríguez</strong>
+              <span>Centro de Reciclaje, Guadalajara</span>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p>"Como industria compradora, encontramos aluminio de calidad en Monterrey en menos de 48 horas. La plataforma es increíble."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar" style="background:#1ABC9C;">LC</div>
+            <div>
+              <strong>Laura Castro</strong>
+              <span>InduMetal SA, Nuevo León</span>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p>"El plan VIP vale totalmente la pena. Mis publicaciones aparecen primero y cerré 3 ventas grandes este mes gracias al sistema."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar" style="background:#16A085;">JM</div>
+            <div>
+              <strong>Jorge Méndez</strong>
+              <span>Proveedor VIP, CDMX</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════ IMPACTO AMBIENTAL ═══════════════════════════ -->
+  <section class="section section-impact">
+    <div class="container">
+      <div class="impact-layout">
+        <div class="impact-text">
+          <span class="section-tag">Impacto real</span>
+          <h2 class="section-title">Cada transacción cuenta para el planeta</h2>
+          <p>Cada kilogramo de material reciclado a través de ECOMATCH evita emisiones de CO₂ y reduce la extracción de materias primas vírgenes en México.</p>
+        </div>
+        <div class="impact-counters">
+          <div class="impact-counter">
+            <span class="impact-icon">🌱</span>
+            <span class="impact-value" data-target="12400">0</span>
+            <span class="impact-unit">ton CO₂ evitadas</span>
+          </div>
+          <div class="impact-counter">
+            <span class="impact-icon">💧</span>
+            <span class="impact-value" data-target="8700000">0</span>
+            <span class="impact-unit">litros de agua ahorrados</span>
+          </div>
+          <div class="impact-counter">
+            <span class="impact-icon">⚡</span>
+            <span class="impact-value" data-target="340000">0</span>
+            <span class="impact-unit">kWh de energía conservada</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════ CTA FINAL ═══════════════════════════ -->
+  <section class="section section-cta-final">
+    <div class="container">
+      <div class="cta-box">
+        <div class="cta-glow"></div>
+        <h2>¿Listo para transformar tus residuos en recursos?</h2>
+        <p>Únete a más de 320 empresas que ya optimizan su cadena de reciclaje con ECOMATCH</p>
+        <div class="cta-buttons">
+          <a href="#registro" class="btn-hero-primary">Registrarme gratis</a>
+          <a href="#contacto" class="btn-hero-secondary">Hablar con un asesor</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════ CONTACTO ═══════════════════════════ -->
+  <section class="section" id="contacto">
+    <div class="container">
+      <div class="contact-layout">
+        <div class="contact-info">
+          <span class="section-tag">Contacto</span>
+          <h2 class="section-title">¿Tienes preguntas?</h2>
+          <p>Nuestro equipo está listo para ayudarte a integrar tu empresa a la economía circular.</p>
+          <div class="contact-details">
+            <div class="contact-item">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              contacto@ecomatch.mx
+            </div>
+            <div class="contact-item">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              +52 (800) ECO-MATCH
+            </div>
+            <div class="contact-item">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Ciudad de México, México
+            </div>
+          </div>
+        </div>
+        <form class="contact-form" id="contactForm">
+          <div class="form-group">
+            <label>Nombre completo</label>
+            <input type="text" placeholder="Ej. Juan García" required />
+          </div>
+          <div class="form-group">
+            <label>Correo electrónico</label>
+            <input type="email" placeholder="correo@empresa.com" required />
+          </div>
+          <div class="form-group">
+            <label>Tipo de usuario</label>
+            <select>
+              <option value="">Selecciona...</option>
+              <option>Vendedor de materiales</option>
+              <option>Industria compradora</option>
+              <option>Centro de reciclaje</option>
+              <option>Otro</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Mensaje</label>
+            <textarea rows="4" placeholder="¿En qué podemos ayudarte?"></textarea>
+          </div>
+          <button type="submit" class="btn-primary" style="width:100%;">Enviar mensaje</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════ LOGIN ═══════════════════════════ -->
+  <section class="section" id="login" style="display:none;">
+    <div class="container">
+      <div class="auth-layout">
+        <div class="auth-form">
+          <div class="auth-header">
+            <h2>Iniciar sesión</h2>
+            <p>Accede a tu cuenta de ECOMATCH</p>
+          </div>
+          <form id="loginForm">
+            <div class="form-group">
+              <label for="loginEmail">Correo electrónico</label>
+              <input type="email" id="loginEmail" placeholder="correo@empresa.com" required />
+            </div>
+            <div class="form-group">
+              <label for="loginPassword">Contraseña</label>
+              <input type="password" id="loginPassword" placeholder="Tu contraseña" required />
+            </div>
+            <button type="submit" class="btn-primary" style="width:100%;">Iniciar sesión</button>
+          </form>
+          <div class="auth-links">
+            <a href="#registro">¿No tienes cuenta? Regístrate</a>
+            <a href="#recuperar">¿Olvidaste tu contraseña?</a>
+          </div>
+        </div>
+        <div class="auth-info">
+          <h3>¡Bienvenido de vuelta!</h3>
+          <p>Accede a miles de materiales reciclables y conecta con proveedores verificados en toda la República Mexicana.</p>
+          <ul class="auth-features">
+            <li>📊 Panel de control personalizado</li>
+            <li>💬 Chat en tiempo real</li>
+            <li>📈 Estadísticas de tus operaciones</li>
+            <li>🔒 Transacciones seguras</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════ REGISTRO ═══════════════════════════ -->
+  <section class="section" id="registro" style="display:none;">
+    <div class="container">
+      <div class="auth-layout">
+        <div class="auth-form">
+          <div class="auth-header">
+            <h2>Crear cuenta</h2>
+            <p>Únete a la red de reciclaje más grande de México</p>
+          </div>
+          <form id="registerForm">
+            <div class="form-group">
+              <label for="registerName">Nombre de la empresa</label>
+              <input type="text" id="registerName" placeholder="Ej. ReciclaMax SA de CV" required />
+            </div>
+            <div class="form-group">
+              <label for="registerEmail">Correo electrónico</label>
+              <input type="email" id="registerEmail" placeholder="contacto@empresa.com" required />
+            </div>
+            <div class="form-group">
+              <label for="registerPassword">Contraseña</label>
+              <input type="password" id="registerPassword" placeholder="Mínimo 8 caracteres" required />
+            </div>
+            <div class="form-group">
+              <label for="registerType">Tipo de usuario</label>
+              <select id="registerType" required>
+                <option value="">Selecciona...</option>
+                <option value="vendedor">Vendedor de materiales</option>
+                <option value="comprador">Industria compradora</option>
+                <option value="centro">Centro de reciclaje</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="registerState">Estado</label>
+              <select id="registerState" required>
+                <option value="">Selecciona tu estado...</option>
+                <option value="aguascalientes">Aguascalientes</option>
+                <option value="baja-california">Baja California</option>
+                <option value="baja-california-sur">Baja California Sur</option>
+                <option value="campeche">Campeche</option>
+                <option value="chiapas">Chiapas</option>
+                <option value="chihuahua">Chihuahua</option>
+                <option value="coahuila">Coahuila</option>
+                <option value="colima">Colima</option>
+                <option value="cdmx">Ciudad de México</option>
+                <option value="durango">Durango</option>
+                <option value="guanajuato">Guanajuato</option>
+                <option value="guerrero">Guerrero</option>
+                <option value="hidalgo">Hidalgo</option>
+                <option value="jalisco">Jalisco</option>
+                <option value="mexico">Estado de México</option>
+                <option value="michoacan">Michoacán</option>
+                <option value="morelos">Morelos</option>
+                <option value="nayarit">Nayarit</option>
+                <option value="nuevo-leon">Nuevo León</option>
+                <option value="oaxaca">Oaxaca</option>
+                <option value="puebla">Puebla</option>
+                <option value="queretaro">Querétaro</option>
+                <option value="quintana-roo">Quintana Roo</option>
+                <option value="san-luis-potosi">San Luis Potosí</option>
+                <option value="sinaloa">Sinaloa</option>
+                <option value="sonora">Sonora</option>
+                <option value="tabasco">Tabasco</option>
+                <option value="tamaulipas">Tamaulipas</option>
+                <option value="tlaxcala">Tlaxcala</option>
+                <option value="veracruz">Veracruz</option>
+                <option value="yucatan">Yucatán</option>
+                <option value="zacatecas">Zacatecas</option>
+              </select>
+            </div>
+            <button type="submit" class="btn-primary" style="width:100%;">Crear cuenta gratis</button>
+          </form>
+          <div class="auth-links">
+            <a href="#login">¿Ya tienes cuenta? Inicia sesión</a>
+          </div>
+        </div>
+        <div class="auth-info">
+          <h3>¡Únete a ECOMATCH!</h3>
+          <p>Regístrate gratis y comienza a conectar tus residuos con quien los necesita. Miles de empresas ya están optimizando su cadena de reciclaje.</p>
+          <ul class="auth-features">
+            <li>✅ Verificación gratuita de empresa</li>
+            <li>🚀 Publicación inmediata</li>
+            <li>💼 Soporte especializado</li>
+            <li>🔐 Seguridad bancaria</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════ FOOTER ═══════════════════════════ -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="nav-logo" style="margin-bottom:16px;">
+            <div class="logo-icon">
+              <img src="assets/images/logo.png" alt="ECOMATCH Logo" width="240" height="170" />
+            </div>
+          </div>
+          <p style="color:#8899aa;font-size:14px;line-height:1.7;">Conectando residuos y recursos en toda la República Mexicana. Economía circular hecha tecnología.</p>
+        </div>
+        <div class="footer-links">
+          <h4>Plataforma</h4>
+          <ul>
+            <li><a href="#">Inicio</a></li>
+            <li><a href="#">Materiales</a></li>
+            <li><a href="#">Publicar</a></li>
+            <li><a href="#">Empresas</a></li>
+            <li><a href="#">Plan VIP</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Empresa</h4>
+          <ul>
+            <li><a href="#">Nosotros</a></li>
+            <li><a href="#">Cómo funciona</a></li>
+            <li><a href="#">Blog</a></li>
+            <li><a href="#">Prensa</a></li>
+            <li><a href="#">Contacto</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="#">Términos de uso</a></li>
+            <li><a href="#">Privacidad</a></li>
+            <li><a href="#">Cookies</a></li>
+            <li><a href="#">Comisiones</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2025 ECOMATCH. Todos los derechos reservados. Hecho en México 🇲🇽</p>
+        <p style="color:#2ECC71;font-size:13px;">Conectando residuos y recursos</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
