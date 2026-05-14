@@ -2,20 +2,20 @@
 # integrantes -Susan Montserrat Mendez Vargas, -Diego Antonio Leon Jimenez, -Jose Fernando Marin Cordova
 
 
-## 🚀 Descripción
+## Descripción
 Backend profesional para ECOMATCH, plataforma de comercio electrónico para materiales reciclables. Desarrollado con Node.js, Express y MySQL siguiendo arquitectura MVC.
 
-## 📋 Características
-- ✅ Autenticación JWT con bcryptjs
-- ✅ Rate limiting y validaciones de seguridad
-- ✅ Arquitectura MVC completa
-- ✅ 5 CRUDS completos: Users, Products, Payments, VIP, Chat
-- ✅ Endpoints listos para Postman
-- ✅ Compatible con MySQL
-- ✅ Manejo de archivos con Multer
-- ✅ Sistema de comisiones dinámico
+## Características
+- Autenticación JWT con bcryptjs
+- Rate limiting y validaciones de seguridad
+- rquitectura MVC completa
+- 5 CRUDS completos: Users, Products, Payments, VIP, Chat
+- Endpoints listos para Postman
+- Compatible con MySQL
+- Manejo de archivos con Multer
+- Sistema de comisiones dinámico
 
-## 🛠️ Tecnologías
+## Tecnologías
 - **Runtime**: Node.js
 - **Framework**: Express.js
 - **Base de datos**: MySQL con mysql2
@@ -25,7 +25,7 @@ Backend profesional para ECOMATCH, plataforma de comercio electrónico para mate
 - **Seguridad**: Helmet, CORS, Morgan
 - **Rate Limiting**: express-rate-limit
 
-## 🚀 Inicio Rápido
+## Inicio Rápido
 
 ### 1. Instalar dependencias
 ```bash
@@ -56,9 +56,9 @@ npm start
 
 El servidor estará disponible en `http://localhost:3000`
 
-## 📚 API Endpoints
+## API Endpoints
 
-### 🔐 Autenticación
+### Autenticación
 
 #### POST /api/auth/register
 Registra un nuevo usuario.
@@ -86,7 +86,7 @@ Cierra sesión (requiere token).
 #### GET /api/auth/profile
 Obtiene perfil del usuario autenticado (requiere token).
 
-### 👥 Usuarios
+### Usuarios
 
 #### GET /api/users
 Lista todos los usuarios (solo admin).
@@ -106,7 +106,7 @@ Obtiene calificaciones de un usuario.
 #### POST /api/users/:id/rate
 Califica a un usuario (1-5 estrellas).
 
-### 📦 Productos/Publicaciones
+### Productos/Publicaciones
 
 #### GET /api/products
 Lista publicaciones con filtros paginados.
@@ -126,7 +126,7 @@ Elimina publicación (solo propietario).
 #### GET /api/products/search
 Búsqueda avanzada de publicaciones.
 
-### 💳 Pagos
+### Pagos
 
 #### POST /api/payments/transaccion
 Registra nueva transacción.
@@ -143,7 +143,7 @@ Cancela transacción (admin o participantes).
 #### GET /api/payments/admin/stats
 Estadísticas de pagos (solo admin).
 
-### 👑 VIP
+### VIP
 
 #### GET /api/vip/planes
 Lista planes VIP disponibles.
@@ -166,7 +166,7 @@ Historial de suscripciones VIP.
 #### GET /api/vip/admin/stats
 Estadísticas VIP (solo admin).
 
-### 💬 Chat
+### Chat
 
 #### GET /api/chat/conversations
 Lista conversaciones del usuario.
@@ -192,12 +192,12 @@ Elimina conversación (admin o participantes).
 #### GET /api/chat/admin/stats
 Estadísticas de chat (solo admin).
 
-### 🏠 General
+### General
 
 #### GET /api/inicio
 Estadísticas generales de la plataforma.
 
-## 🧪 Testing con cURL
+## Testing con cURL
 
 ### Registro de usuario
 ```bash
@@ -227,25 +227,25 @@ curl -X GET "http://localhost:3000/api/products" \
   -H "Authorization: Bearer TU_TOKEN_AQUI"
 ```
 
-## 📊 Base de Datos
+## Base de Datos
 
 El esquema completo está en `database_schema.sql` e incluye:
-- ✅ Tablas normalizadas con foreign keys
-- ✅ Índices para optimización
-- ✅ Datos de ejemplo
-- ✅ Constraints de integridad
+- Tablas normalizadas con foreign keys
+- Indices para optimización
+- Datos de ejemplo
+- Constraints de integridad
 
-## 🔒 Seguridad
+## Seguridad
 
-- ✅ JWT con expiración
-- ✅ Rate limiting (100 req/15min por IP)
-- ✅ Validación de entrada
-- ✅ Hashing de passwords con bcrypt
-- ✅ Headers de seguridad con Helmet
-- ✅ CORS configurado
-- ✅ Logging con Morgan
+- JWT con expiración
+- Rate limiting (100 req/15min por IP)
+- Validación de entrada
+- Hashing de passwords con bcrypt
+- Headers de seguridad con Helmet
+- CORS configurado
+- Logging con Morgan
 
-## 📝 Notas de Desarrollo
+## Notas de Desarrollo
 
 - El backend está completamente funcional y probado
 - Todos los endpoints incluyen validaciones y manejo de errores
@@ -253,9 +253,9 @@ El esquema completo está en `database_schema.sql` e incluye:
 - Sistema de comisiones dinámico basado en planes VIP
 - Compatible con Postman para testing completo
 
-## 🎯 Estado del Proyecto
+## Estado del Proyecto
 
-✅ **COMPLETADO**: Backend profesional con todos los requerimientos implementados.
+**COMPLETADO**: Backend profesional con todos los requerimientos implementados.
 
 **Próximos pasos sugeridos:**
 1. Integración completa con frontend
