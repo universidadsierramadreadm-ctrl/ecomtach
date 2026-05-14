@@ -1,95 +1,178 @@
 // ══════════════════════════════════════════════════════
 //  ECOMATCH — controllers/chatController.js
+//  Gestión de chat y conversaciones
 // ══════════════════════════════════════════════════════
+const chatModel = require('../models/chatModel');
 const db = require('../config/database');
 
+/* GET /api/chat/conversations */
 exports.getConversations = async (req, res) => {
   try {
-    const [rows] = await db.query(
-      `SELECT c.*, 
-        u1.nombre AS usuario1_nombre, u2.nombre AS usuario2_nombre,
-        p.titulo AS producto_titulo,
-        (SELECT contenido FROM mensajes m WHERE m.conversacion_id = c.id ORDER BY m.creado_en DESC LIMIT 1) AS ultimo_mensaje,
-        (SELECT creado_en FROM mensajes m WHERE m.conversacion_id = c.id ORDER BY m.creado_en DESC LIMIT 1) AS ultimo_mensaje_fecha,
-        (SELECT COUNT(*) FROM mensajes m WHERE m.conversacion_id = c.id AND m.receptor_id = ? AND m.leido = 0) AS no_leidos
-       FROM conversaciones c
-       JOIN usuarios u1 ON c.usuario1_id = u1.id
-       JOIN usuarios u2 ON c.usuario2_id = u2.id
-       LEFT JOIN publicaciones p ON c.publicacion_id = p.id
-       WHERE c.usuario1_id = ? OR c.usuario2_id = ?
-       ORDER BY ultimo_mensaje_fecha DESC`,
-      [req.user.id, req.user.id, req.user.id]
-    );
-    res.json({ success: true, data: rows });
+    const conversations = await chatModel.getUserConversations(req.user.id);
+    res.json({ success: true, data: conversations });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
 };
 
+/* GET /api/chat/conversations/:id/messages */
 exports.getMessages = async (req, res) => {
   try {
-    const { conversacion_id } = req.params;
+    const { id } = req.params;
+    const limit = parseInt(req.query.limit) || 50;
 
-    const [conv] = await db.query(
-      'SELECT * FROM conversaciones WHERE id = ? AND (usuario1_id = ? OR usuario2_id = ?)',
-      [conversacion_id, req.user.id, req.user.id]
-    );
-    if (conv.length === 0)
+    // Verificar que el usuario tiene acceso a la conversación
+    const conversation = await chatModel.getById(id);
+    if (!conversation)
+      return res.status(404).json({ success: false, message: 'Conversación no encontrada' });
+
+    if (conversation.usuario1_id !== req.user.id && conversation.usuario2_id !== req.user.id)
       return res.status(403).json({ success: false, message: 'Sin acceso a esta conversación' });
 
-    const [msgs] = await db.query(
-      `SELECT m.*, u.nombre AS emisor_nombre FROM mensajes m
-       JOIN usuarios u ON m.emisor_id = u.id
-       WHERE m.conversacion_id = ? ORDER BY m.creado_en ASC`,
-      [conversacion_id]
-    );
+    const messages = await chatModel.getMessages(id, limit);
 
-    // Marcar como leídos
-    await db.query(
-      'UPDATE mensajes SET leido = 1 WHERE conversacion_id = ? AND receptor_id = ? AND leido = 0',
-      [conversacion_id, req.user.id]
-    );
+    // Marcar mensajes como leídos
+    await chatModel.markAsRead(id, req.user.id);
 
-    res.json({ success: true, data: msgs });
+    res.json({ success: true, data: messages });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
 };
 
+/* POST /api/chat/messages */
 exports.sendMessage = async (req, res) => {
   try {
-    const { receptor_id, contenido, publicacion_id } = req.body;
+    const { conversacion_id, mensaje } = req.body;
 
-    if (!receptor_id || !contenido)
-      return res.status(400).json({ success: false, message: 'receptor_id y contenido son requeridos' });
+    if (!conversacion_id || !mensaje)
+      return res.status(400).json({ success: false, message: 'conversacion_id y mensaje son requeridos' });
 
-    // Buscar o crear conversación
-    let [conv] = await db.query(
-      `SELECT id FROM conversaciones 
-       WHERE (usuario1_id = ? AND usuario2_id = ?) OR (usuario1_id = ? AND usuario2_id = ?)`,
-      [req.user.id, receptor_id, receptor_id, req.user.id]
-    );
+    // Verificar que el usuario tiene acceso a la conversación
+    const conversation = await chatModel.getById(conversacion_id);
+    if (!conversation)
+      return res.status(404).json({ success: false, message: 'Conversación no encontrada' });
 
-    let convId;
-    if (conv.length === 0) {
-      const [res2] = await db.query(
-        'INSERT INTO conversaciones (usuario1_id, usuario2_id, publicacion_id) VALUES (?,?,?)',
-        [req.user.id, receptor_id, publicacion_id || null]
-      );
-      convId = res2.insertId;
-    } else {
-      convId = conv[0].id;
-    }
+    if (conversation.usuario1_id !== req.user.id && conversation.usuario2_id !== req.user.id)
+      return res.status(403).json({ success: false, message: 'Sin acceso a esta conversación' });
 
-    const [msg] = await db.query(
-      'INSERT INTO mensajes (conversacion_id, emisor_id, receptor_id, contenido) VALUES (?,?,?,?)',
-      [convId, req.user.id, receptor_id, contenido]
-    );
+    const messageId = await chatModel.sendMessage({
+      conversacion_id,
+      remitente_id: req.user.id,
+      mensaje
+    });
 
     res.status(201).json({
       success: true,
-      data: { id: msg.insertId, conversacion_id: convId, contenido, creado_en: new Date() }
+      message: 'Mensaje enviado exitosamente',
+      data: { id: messageId, conversacion_id, mensaje, fecha_envio: new Date() }
     });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+/* POST /api/chat/conversations */
+exports.createConversation = async (req, res) => {
+  try {
+    const { usuario2_id, publicacion_id } = req.body;
+
+    if (!usuario2_id || !publicacion_id)
+      return res.status(400).json({ success: false, message: 'usuario2_id y publicacion_id son requeridos' });
+
+    // Verificar que la publicación existe
+    const [pub] = await db.query('SELECT id, usuario_id FROM publicaciones WHERE id = ? AND activo = 1', [publicacion_id]);
+    if (pub.length === 0)
+      return res.status(404).json({ success: false, message: 'Publicación no encontrada' });
+
+    // No permitir conversación consigo mismo
+    if (req.user.id === usuario2_id)
+      return res.status(400).json({ success: false, message: 'No puedes iniciar una conversación contigo mismo' });
+
+    // Verificar si ya existe una conversación
+    const existingConv = await chatModel.getConversationBetweenUsers(req.user.id, usuario2_id, publicacion_id);
+    if (existingConv)
+      return res.status(400).json({ success: false, message: 'Ya existe una conversación para esta publicación' });
+
+    const conversationId = await chatModel.createConversation({
+      usuario1_id: req.user.id,
+      usuario2_id,
+      publicacion_id
+    });
+
+    res.status(201).json({
+      success: true,
+      message: 'Conversación creada exitosamente',
+      data: { id: conversationId }
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+/* PUT /api/chat/conversations/:id/read */
+exports.markAsRead = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Verificar acceso a la conversación
+    const conversation = await chatModel.getById(id);
+    if (!conversation)
+      return res.status(404).json({ success: false, message: 'Conversación no encontrada' });
+
+    if (conversation.usuario1_id !== req.user.id && conversation.usuario2_id !== req.user.id)
+      return res.status(403).json({ success: false, message: 'Sin acceso a esta conversación' });
+
+    await chatModel.markAsRead(id, req.user.id);
+
+    res.json({ success: true, message: 'Mensajes marcados como leídos' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+/* GET /api/chat/unread */
+exports.getUnreadMessages = async (req, res) => {
+  try {
+    const unreadMessages = await chatModel.getUnreadMessages(req.user.id);
+    res.json({ success: true, data: unreadMessages });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+/* GET /api/chat/admin/stats — Solo admin */
+exports.adminStats = async (req, res) => {
+  try {
+    if (req.user.tipo_usuario !== 'admin')
+      return res.status(403).json({ success: false, message: 'Acceso denegado' });
+
+    const stats = await chatModel.getAdminStats();
+    res.json({ success: true, data: stats });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+/* DELETE /api/chat/conversations/:id — Solo admin o participantes */
+exports.deleteConversation = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Verificar acceso a la conversación
+    const conversation = await chatModel.getById(id);
+    if (!conversation)
+      return res.status(404).json({ success: false, message: 'Conversación no encontrada' });
+
+    // Solo admin o participantes pueden eliminar
+    if (req.user.tipo_usuario !== 'admin' &&
+        conversation.usuario1_id !== req.user.id &&
+        conversation.usuario2_id !== req.user.id)
+      return res.status(403).json({ success: false, message: 'Sin permisos para eliminar esta conversación' });
+
+    await chatModel.deleteConversation(id);
+
+    res.json({ success: true, message: 'Conversación eliminada exitosamente' });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }

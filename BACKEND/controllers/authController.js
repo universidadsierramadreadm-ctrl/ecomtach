@@ -4,9 +4,9 @@
 // ══════════════════════════════════════════════════════
 const bcrypt = require('bcryptjs');
 const jwt    = require('jsonwebtoken');
-const db     = require('../config/database');
+const authModel = require('../models/authModel');
 
-const JWT_SECRET  = process.env.JWT_SECRET  || 'ecomatch_secret_2024';
+const JWT_SECRET  = process.env.JWT_SECRET  || 'ecomatch_jwt_secret_2024_secure_key_change_in_production_abcdef123456';
 const JWT_EXPIRES = process.env.JWT_EXPIRES || '7d';
 
 /* ── Generar JWT ── */
@@ -23,27 +23,43 @@ exports.register = async (req, res) => {
     if (!nombre || !email || !password || !tipo_usuario)
       return res.status(400).json({ success: false, message: 'Campos requeridos: nombre, email, password, tipo_usuario' });
 
+    // Validar formato de email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email))
+      return res.status(400).json({ success: false, message: 'Formato de email inválido' });
+
     if (password.length < 8)
       return res.status(400).json({ success: false, message: 'La contraseña debe tener mínimo 8 caracteres' });
 
-    const [existing] = await db.query('SELECT id FROM usuarios WHERE email = ?', [email]);
-    if (existing.length > 0)
+    // Validar tipo_usuario contra ENUM
+    const tiposValidos = ['vendedor', 'comprador', 'centro', 'admin'];
+    if (!tiposValidos.includes(tipo_usuario))
+      return res.status(400).json({ success: false, message: 'Tipo de usuario inválido. Debe ser: vendedor, comprador, centro o admin' });
+
+    // Verificar si email ya existe
+    const emailExists = await authModel.emailExists(email);
+    if (emailExists)
       return res.status(409).json({ success: false, message: 'El email ya está registrado' });
 
     const hash = await bcrypt.hash(password, 12);
-    const [result] = await db.query(
-      `INSERT INTO usuarios (nombre, email, password_hash, tipo_usuario, empresa, telefono, estado, ciudad)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [nombre, email, hash, tipo_usuario, empresa || null, telefono || null, estado || null, ciudad || null]
-    );
+    const userId = await authModel.create({
+      nombre,
+      email,
+      password_hash: hash,
+      tipo_usuario,
+      empresa,
+      telefono,
+      estado,
+      ciudad
+    });
 
-    const token = signToken({ id: result.insertId, email, tipo_usuario });
+    const token = signToken({ id: userId, email, tipo_usuario });
 
     res.status(201).json({
       success: true,
       message: '¡Cuenta creada exitosamente!',
       token,
-      user: { id: result.insertId, nombre, email, tipo_usuario }
+      user: { id: userId, nombre, email, tipo_usuario }
     });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
@@ -60,14 +76,10 @@ exports.login = async (req, res) => {
     if (!email || !password)
       return res.status(400).json({ success: false, message: 'Email y contraseña requeridos' });
 
-    const [rows] = await db.query(
-      'SELECT id, nombre, email, password_hash, tipo_usuario, es_vip, activo FROM usuarios WHERE email = ?',
-      [email]
-    );
-    if (rows.length === 0)
+    const user = await authModel.findByEmail(email);
+    if (!user)
       return res.status(401).json({ success: false, message: 'Credenciales incorrectas' });
 
-    const user = rows[0];
     if (!user.activo)
       return res.status(403).json({ success: false, message: 'Cuenta suspendida. Contacta soporte.' });
 
@@ -75,7 +87,7 @@ exports.login = async (req, res) => {
     if (!valid)
       return res.status(401).json({ success: false, message: 'Credenciales incorrectas' });
 
-    await db.query('UPDATE usuarios SET ultimo_login = NOW() WHERE id = ?', [user.id]);
+    await authModel.updateLastLogin(user.id);
 
     const token = signToken({ id: user.id, email: user.email, tipo_usuario: user.tipo_usuario });
 
@@ -95,14 +107,11 @@ exports.login = async (req, res) => {
 ──────────────────────────────── */
 exports.getMe = async (req, res) => {
   try {
-    const [rows] = await db.query(
-      'SELECT id, nombre, email, tipo_usuario, empresa, telefono, estado, ciudad, es_vip, creado_en FROM usuarios WHERE id = ?',
-      [req.user.id]
-    );
-    if (rows.length === 0)
+    const user = await authModel.findById(req.user.id);
+    if (!user)
       return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
 
-    res.json({ success: true, user: rows[0] });
+    res.json({ success: true, user });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
@@ -114,18 +123,38 @@ exports.getMe = async (req, res) => {
 exports.changePassword = async (req, res) => {
   try {
     const { password_actual, password_nuevo } = req.body;
-    const [rows] = await db.query('SELECT password_hash FROM usuarios WHERE id = ?', [req.user.id]);
-    const valid = await bcrypt.compare(password_actual, rows[0].password_hash);
+
+    if (!password_actual || !password_nuevo)
+      return res.status(400).json({ success: false, message: 'Contraseña actual y nueva son requeridas' });
+
+    const currentHash = await authModel.getPasswordHash(req.user.id);
+    if (!currentHash)
+      return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
+
+    const valid = await bcrypt.compare(password_actual, currentHash);
     if (!valid)
       return res.status(401).json({ success: false, message: 'Contraseña actual incorrecta' });
 
     if (password_nuevo.length < 8)
       return res.status(400).json({ success: false, message: 'La nueva contraseña debe tener mínimo 8 caracteres' });
 
-    const hash = await bcrypt.hash(password_nuevo, 12);
-    await db.query('UPDATE usuarios SET password_hash = ? WHERE id = ?', [hash, req.user.id]);
+    const newHash = await bcrypt.hash(password_nuevo, 12);
+    await authModel.updatePassword(req.user.id, newHash);
 
     res.json({ success: true, message: 'Contraseña actualizada correctamente' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+/* ────────────────────────────────
+   POST /api/auth/logout
+──────────────────────────────── */
+exports.logout = async (req, res) => {
+  try {
+    // En una implementación completa, aquí se agregaría el token a una blacklist
+    // Por ahora, solo respondemos con éxito (el cliente debe eliminar el token localmente)
+    res.json({ success: true, message: 'Sesión cerrada correctamente' });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }

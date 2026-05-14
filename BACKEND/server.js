@@ -54,6 +54,9 @@ app.use('/api/payments', paymentRoutes);
 app.use('/api/vip',      vipRoutes);
 app.use('/api/chat',     chatRoutes);
 
+// Ruta de inicio (pública)
+app.get('/api/inicio', require('./controllers/userController').getInicio);
+
 // Ruta de salud
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', version: '1.0.0', platform: 'ECOMATCH', timestamp: new Date() });

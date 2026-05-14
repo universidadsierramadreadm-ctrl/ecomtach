@@ -2,7 +2,7 @@
 //  ECOMATCH — controllers/productController.js
 //  CRUD completo de publicaciones de materiales
 // ══════════════════════════════════════════════════════
-const db   = require('../config/database');
+const productModel = require('../models/productModel');
 const path = require('path');
 const fs   = require('fs');
 
@@ -14,52 +14,37 @@ exports.getAll = async (req, res) => {
   try {
     const {
       tipo_material, estado, ciudad, precio_min, precio_max,
-      calidad, page = 1, limit = 12, search, orden = 'reciente'
+      page = 1, limit = 12, search, sort = 'fecha_publicacion', order = 'DESC'
     } = req.query;
 
-    const offset = (parseInt(page) - 1) * parseInt(limit);
-    const params = [];
-    let where = 'WHERE p.activo = 1 AND p.estado_publicacion = "disponible"';
-
-    if (tipo_material) { where += ' AND p.tipo_material = ?'; params.push(tipo_material); }
-    if (estado)        { where += ' AND p.estado = ?';        params.push(estado); }
-    if (ciudad)        { where += ' AND p.ciudad LIKE ?';     params.push(`%${ciudad}%`); }
-    if (precio_min)    { where += ' AND p.precio_kg >= ?';    params.push(precio_min); }
-    if (precio_max)    { where += ' AND p.precio_kg <= ?';    params.push(precio_max); }
-    if (calidad)       { where += ' AND p.calidad = ?';       params.push(calidad); }
-    if (search)        { where += ' AND (p.titulo LIKE ? OR p.descripcion LIKE ?)'; params.push(`%${search}%`, `%${search}%`); }
-
-    const orderMap = {
-      reciente:  'p.creado_en DESC',
-      precio_asc:'p.precio_kg ASC',
-      precio_desc:'p.precio_kg DESC',
-      cantidad:  'p.cantidad_kg DESC',
-      vip:       'u.es_vip DESC, p.creado_en DESC'
+    const filters = {
+      tipo_material,
+      precio_min: precio_min ? parseFloat(precio_min) : undefined,
+      precio_max: precio_max ? parseFloat(precio_max) : undefined,
+      estado,
+      ciudad,
+      search,
+      limit: parseInt(limit),
+      offset: (parseInt(page) - 1) * parseInt(limit),
+      sort,
+      order
     };
-    const orderBy = orderMap[orden] || orderMap.reciente;
 
-    const sql = `
-      SELECT p.*, u.nombre AS vendedor_nombre, u.empresa AS vendedor_empresa,
-             u.es_vip AS vendedor_vip, u.calificacion_promedio AS vendedor_calif
-      FROM publicaciones p
-      JOIN usuarios u ON p.vendedor_id = u.id
-      ${where}
-      ORDER BY ${orderBy}
-      LIMIT ? OFFSET ?
-    `;
-    params.push(parseInt(limit), offset);
+    const products = await productModel.getAll(filters);
 
-    const [rows] = await db.query(sql, params);
-
-    const [[{total}]] = await db.query(
-      `SELECT COUNT(*) AS total FROM publicaciones p JOIN usuarios u ON p.vendedor_id = u.id ${where}`,
-      params.slice(0, -2)
-    );
+    // Obtener total para paginación (esto debería estar en el modelo también)
+    const totalQuery = await productModel.getAll({ ...filters, limit: 1000000, offset: 0 });
+    const total = totalQuery.length;
 
     res.json({
       success: true,
-      data: rows,
-      pagination: { page: parseInt(page), limit: parseInt(limit), total, pages: Math.ceil(total / limit) }
+      data: products,
+      pagination: {
+        page: parseInt(page),
+        limit: parseInt(limit),
+        total,
+        pages: Math.ceil(total / parseInt(limit))
+      }
     });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
@@ -71,22 +56,14 @@ exports.getAll = async (req, res) => {
 ──────────────────────────────── */
 exports.getOne = async (req, res) => {
   try {
-    const [rows] = await db.query(
-      `SELECT p.*, u.nombre AS vendedor_nombre, u.empresa AS vendedor_empresa,
-              u.es_vip, u.estado AS vendedor_estado, u.calificacion_promedio,
-              u.total_ventas
-       FROM publicaciones p
-       JOIN usuarios u ON p.vendedor_id = u.id
-       WHERE p.id = ? AND p.activo = 1`,
-      [req.params.id]
-    );
-    if (rows.length === 0)
+    const product = await productModel.getById(req.params.id);
+    if (!product)
       return res.status(404).json({ success: false, message: 'Publicación no encontrada' });
 
     // Incrementar vistas
-    await db.query('UPDATE publicaciones SET vistas = vistas + 1 WHERE id = ?', [req.params.id]);
+    await productModel.incrementViews(req.params.id);
 
-    res.json({ success: true, data: rows[0] });
+    res.json({ success: true, data: product });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
@@ -99,28 +76,41 @@ exports.getOne = async (req, res) => {
 exports.create = async (req, res) => {
   try {
     const {
-      titulo, descripcion, tipo_material, cantidad_kg,
-      precio_kg, calidad, estado, ciudad, tipo_entrega, contacto_adicional
+      titulo, descripcion, tipo_material, cantidad, precio, estado, ciudad
     } = req.body;
 
-    if (!titulo || !tipo_material || !cantidad_kg || !precio_kg)
-      return res.status(400).json({ success: false, message: 'Faltan campos requeridos' });
+    if (!titulo || !tipo_material || !cantidad || !precio)
+      return res.status(400).json({ success: false, message: 'Faltan campos requeridos: titulo, tipo_material, cantidad, precio' });
 
-    const foto_url = req.file ? `/uploads/${req.file.filename}` : null;
+    // Validar valores numéricos
+    const cantidadNum = parseFloat(cantidad);
+    const precioNum = parseFloat(precio);
 
-    const [result] = await db.query(
-      `INSERT INTO publicaciones
-       (vendedor_id, titulo, descripcion, tipo_material, cantidad_kg, precio_kg,
-        calidad, estado, ciudad, tipo_entrega, foto_url, contacto_adicional)
-       VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`,
-      [req.user.id, titulo, descripcion, tipo_material, cantidad_kg, precio_kg,
-       calidad, estado, ciudad, tipo_entrega || 'a_convenir', foto_url, contacto_adicional || null]
-    );
+    if (cantidadNum <= 0 || precioNum <= 0)
+      return res.status(400).json({ success: false, message: 'Cantidad y precio deben ser valores positivos' });
+
+    // Procesar imágenes si existen
+    let imagenes = [];
+    if (req.file) {
+      imagenes = [`/uploads/${req.file.filename}`];
+    }
+
+    const productId = await productModel.create({
+      usuario_id: req.user.id,
+      titulo,
+      descripcion,
+      tipo_material,
+      cantidad: cantidadNum,
+      precio: precioNum,
+      estado,
+      ciudad,
+      imagenes
+    });
 
     res.status(201).json({
       success: true,
       message: 'Publicación creada exitosamente',
-      data: { id: result.insertId }
+      data: { id: productId }
     });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
@@ -132,33 +122,46 @@ exports.create = async (req, res) => {
 ──────────────────────────────── */
 exports.update = async (req, res) => {
   try {
-    const [rows] = await db.query(
-      'SELECT vendedor_id FROM publicaciones WHERE id = ?', [req.params.id]
-    );
-    if (rows.length === 0)
+    const product = await productModel.getById(req.params.id);
+    if (!product)
       return res.status(404).json({ success: false, message: 'Publicación no encontrada' });
 
-    if (rows[0].vendedor_id !== req.user.id && req.user.tipo_usuario !== 'admin')
+    if (product.usuario_id !== req.user.id && req.user.tipo_usuario !== 'admin')
       return res.status(403).json({ success: false, message: 'Sin permiso para editar esta publicación' });
 
-    const fields = ['titulo','descripcion','tipo_material','cantidad_kg','precio_kg',
-                    'calidad','estado','ciudad','tipo_entrega','estado_publicacion','contacto_adicional'];
-    const updates = [];
-    const values  = [];
+    const {
+      titulo, descripcion, tipo_material, cantidad, precio, estado, ciudad
+    } = req.body;
 
-    fields.forEach(f => {
-      if (req.body[f] !== undefined) { updates.push(`${f} = ?`); values.push(req.body[f]); }
-    });
+    // Validar valores numéricos si se proporcionan
+    const updateData = {};
+    if (titulo !== undefined) updateData.titulo = titulo;
+    if (descripcion !== undefined) updateData.descripcion = descripcion;
+    if (tipo_material !== undefined) updateData.tipo_material = tipo_material;
+    if (cantidad !== undefined) {
+      const cantidadNum = parseFloat(cantidad);
+      if (cantidadNum <= 0) return res.status(400).json({ success: false, message: 'Cantidad debe ser positiva' });
+      updateData.cantidad = cantidadNum;
+    }
+    if (precio !== undefined) {
+      const precioNum = parseFloat(precio);
+      if (precioNum <= 0) return res.status(400).json({ success: false, message: 'Precio debe ser positivo' });
+      updateData.precio = precioNum;
+    }
+    if (estado !== undefined) updateData.estado = estado;
+    if (ciudad !== undefined) updateData.ciudad = ciudad;
 
-    if (req.file) { updates.push('foto_url = ?'); values.push(`/uploads/${req.file.filename}`); }
+    // Procesar nuevas imágenes si existen
+    if (req.file) {
+      updateData.imagenes = [`/uploads/${req.file.filename}`];
+    }
 
-    if (updates.length === 0)
+    if (Object.keys(updateData).length === 0)
       return res.status(400).json({ success: false, message: 'No hay datos para actualizar' });
 
-    values.push(req.params.id);
-    await db.query(`UPDATE publicaciones SET ${updates.join(', ')}, actualizado_en = NOW() WHERE id = ?`, values);
+    await productModel.update(req.params.id, updateData);
 
-    res.json({ success: true, message: 'Publicación actualizada' });
+    res.json({ success: true, message: 'Publicación actualizada correctamente' });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
@@ -169,19 +172,26 @@ exports.update = async (req, res) => {
 ──────────────────────────────── */
 exports.remove = async (req, res) => {
   try {
-    const [rows] = await db.query(
-      'SELECT vendedor_id FROM publicaciones WHERE id = ?', [req.params.id]
-    );
-    if (rows.length === 0)
+    const product = await productModel.getById(req.params.id);
+    if (!product)
       return res.status(404).json({ success: false, message: 'Publicación no encontrada' });
 
-    if (rows[0].vendedor_id !== req.user.id && req.user.tipo_usuario !== 'admin')
-      return res.status(403).json({ success: false, message: 'Sin permiso' });
+    if (product.usuario_id !== req.user.id && req.user.tipo_usuario !== 'admin')
+      return res.status(403).json({ success: false, message: 'Sin permiso para eliminar esta publicación' });
 
-    // Soft delete
-    await db.query('UPDATE publicaciones SET activo = 0, actualizado_en = NOW() WHERE id = ?', [req.params.id]);
+    // Eliminar imágenes del sistema de archivos si existen
+    if (product.imagenes && Array.isArray(product.imagenes)) {
+      product.imagenes.forEach(img => {
+        const imgPath = path.join(__dirname, '../../FRONTEND/assets/images/uploads', path.basename(img));
+        if (fs.existsSync(imgPath)) {
+          fs.unlinkSync(imgPath);
+        }
+      });
+    }
 
-    res.json({ success: true, message: 'Publicación eliminada' });
+    await productModel.remove(req.params.id);
+
+    res.json({ success: true, message: 'Publicación eliminada correctamente' });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
@@ -193,12 +203,55 @@ exports.remove = async (req, res) => {
 ──────────────────────────────── */
 exports.myListings = async (req, res) => {
   try {
-    const [rows] = await db.query(
-      `SELECT *, (SELECT COUNT(*) FROM solicitudes WHERE publicacion_id = publicaciones.id) AS total_solicitudes
-       FROM publicaciones WHERE vendedor_id = ? AND activo = 1 ORDER BY creado_en DESC`,
-      [req.user.id]
+    const products = await productModel.getByUser(req.user.id);
+    res.json({ success: true, data: products });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+/* ────────────────────────────────
+   POST /api/products/:id/request
+   Solicitar compra de publicación
+──────────────────────────────── */
+exports.requestPurchase = async (req, res) => {
+  try {
+    const product = await productModel.getById(req.params.id);
+    if (!product)
+      return res.status(404).json({ success: false, message: 'Publicación no encontrada' });
+
+    if (product.usuario_id === req.user.id)
+      return res.status(400).json({ success: false, message: 'No puedes solicitar tu propia publicación' });
+
+    const { cantidad_solicitada, mensaje } = req.body;
+
+    if (!cantidad_solicitada || parseFloat(cantidad_solicitada) <= 0)
+      return res.status(400).json({ success: false, message: 'Cantidad solicitada debe ser positiva' });
+
+    if (parseFloat(cantidad_solicitada) > parseFloat(product.cantidad))
+      return res.status(400).json({ success: false, message: 'Cantidad solicitada excede el disponible' });
+
+    // Verificar que no haya ya una solicitud pendiente
+    const db = require('../config/database');
+    const [existing] = await db.query(
+      'SELECT id FROM solicitudes WHERE publicacion_id = ? AND comprador_id = ? AND estado = "pendiente"',
+      [req.params.id, req.user.id]
     );
-    res.json({ success: true, data: rows });
+    if (existing.length > 0)
+      return res.status(409).json({ success: false, message: 'Ya tienes una solicitud pendiente para esta publicación' });
+
+    // Crear solicitud
+    const [result] = await db.query(
+      `INSERT INTO solicitudes (publicacion_id, comprador_id, cantidad_solicitada, mensaje, fecha_solicitud)
+       VALUES (?, ?, ?, ?, NOW())`,
+      [req.params.id, req.user.id, parseFloat(cantidad_solicitada), mensaje || null]
+    );
+
+    res.status(201).json({
+      success: true,
+      message: 'Solicitud de compra enviada correctamente',
+      data: { id: result.insertId }
+    });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }

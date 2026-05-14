@@ -7,7 +7,7 @@ const multer  = require('multer');
 const path    = require('path');
 const fs      = require('fs');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'ecomatch_secret_2024';
+const JWT_SECRET = process.env.JWT_SECRET || 'ecomatch_jwt_secret_2024_secure_key_change_in_production_abcdef123456';
 
 /* ── JWT Middleware ── */
 exports.protect = (req, res, next) => {
@@ -50,3 +50,31 @@ const fileFilter = (req, file, cb) => {
 };
 
 exports.upload = multer({ storage, fileFilter, limits: { fileSize: 5 * 1024 * 1024 } }); // 5MB
+
+/* ── Rate Limiting ── */
+const rateLimit = require('express-rate-limit');
+
+// Rate limit general (ya aplicado en server.js)
+// Rate limit específico para auth endpoints
+exports.authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutos
+  max: 5, // máximo 5 intentos por IP
+  message: {
+    success: false,
+    message: 'Demasiados intentos de autenticación. Intenta de nuevo en 15 minutos.'
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Rate limit para chat/mensajes
+exports.chatLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minuto
+  max: 10, // máximo 10 mensajes por minuto
+  message: {
+    success: false,
+    message: 'Demasiados mensajes. Espera un momento.'
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});

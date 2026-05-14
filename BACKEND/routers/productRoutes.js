@@ -12,6 +12,7 @@ router.get('/:id',                ctrl.getOne);
 router.post('/',                  protect, requireRole('vendedor','vip','admin'), upload.single('foto'), ctrl.create);
 router.put('/:id',                protect, upload.single('foto'), ctrl.update);
 router.delete('/:id',             protect, ctrl.remove);
+router.post('/:id/request',       protect, requireRole('comprador','centro','admin'), ctrl.requestPurchase);
 
 module.exports = router;
 
