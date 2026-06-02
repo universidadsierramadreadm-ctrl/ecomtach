@@ -23,13 +23,17 @@ const PORT = process.env.PORT || 3000;
 
 // ── Middlewares globales ──
 app.use(helmet());
-app.use(cors({ 
+app.use(cors({
   origin: [
-    process.env.CLIENT_ORIGIN || //'http://localhost:3000',
     'http://localhost:3000',
-    'http://127.0.0.1:3000'
-  ], 
-  credentials: true 
+    'http://127.0.0.1:3000',
+    'http://localhost:5500',  // Live Server VS Code
+    'http://127.0.0.1:5500',
+    'http://localhost:5501',
+    'http://127.0.0.1:5501',
+    process.env.CLIENT_ORIGIN
+  ].filter(Boolean),
+  credentials: true
 }));
 app.use(morgan('dev'));
 app.use(express.json({ limit: '10mb' }));
@@ -54,8 +58,9 @@ app.use('/api/payments', paymentRoutes);
 app.use('/api/vip',      vipRoutes);
 app.use('/api/chat',     chatRoutes);
 
-// Ruta de inicio (pública)
-app.get('/api/inicio', require('./controllers/userController').getInicio);
+// Ruta de inicio (protegida con JWT)
+const { protect } = require('./routers/middleware');
+app.get('/api/inicio', protect, require('./controllers/userController').getInicio);
 
 // Ruta de salud
 app.get('/api/health', (req, res) => {

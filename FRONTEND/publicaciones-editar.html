@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ECOMATCH — Editar Publicación</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/pages.css" />
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-logo">
+        <div class="logo-icon">
+          <a href="inicio.html"><img src="assets/images/logo.png" alt="ECOMATCH" height="52" /></a>
+        </div>
+      </div>
+      <div class="module-nav">
+        <span class="module-nav-user">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span id="nombreNav"></span>
+        </span>
+        <button class="btn-nav-logout" onclick="cerrarSesion()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Salir
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page-wrap narrow">
+
+    <a href="publicaciones.html" class="back-link">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Volver a publicaciones
+    </a>
+
+    <h1 class="page-title" style="margin-bottom:24px;">Editar Publicación</h1>
+
+    <div id="spinnerWrap" class="spinner-wrap">
+      <div class="spinner teal"></div>
+      <p>Cargando datos...</p>
+    </div>
+
+    <div id="formWrap" style="display:none;" class="form-card">
+      <div id="alerta" class="alerta"></div>
+
+      <form onsubmit="event.preventDefault(); actualizar()">
+
+        <div class="form-field">
+          <label for="inputTitulo">Título del material *</label>
+          <input type="text" id="inputTitulo" />
+        </div>
+
+        <div class="form-row">
+          <div class="form-field">
+            <label for="inputTipo">Tipo de material *</label>
+            <select id="inputTipo">
+              <option value="">Selecciona...</option>
+              <option value="plastico">Plástico / PET</option>
+              <option value="metal">Metal / Acero</option>
+              <option value="papel">Papel / Cartón</option>
+              <option value="vidrio">Vidrio</option>
+              <option value="electronico">Electrónicos</option>
+              <option value="aluminio">Aluminio</option>
+              <option value="cobre">Cobre</option>
+              <option value="otro">Otro</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="inputCiudad">Ciudad / Municipio *</label>
+            <select id="inputCiudad">
+              <option value="">Selecciona...</option>
+              <option value="Rioverde">★ Rioverde (Sede Principal)</option>
+              <option value="San Luis Potosí">San Luis Potosí</option>
+              <option value="Soledad de Graciano Sánchez">Soledad de Graciano Sánchez</option>
+              <option value="Ciudad Valles">Ciudad Valles</option>
+              <option value="Matehuala">Matehuala</option>
+              <option value="Tamazunchale">Tamazunchale</option>
+              <option value="Ciudad Fernández">Ciudad Fernández</option>
+              <option value="Cedral">Cedral</option>
+              <option value="Charcas">Charcas</option>
+              <option value="Cerritos">Cerritos</option>
+              <option value="Ébano">Ébano</option>
+              <option value="Santa María del Río">Santa María del Río</option>
+              <option value="Villa de Reyes">Villa de Reyes</option>
+              <option value="Mexquitic de Carmona">Mexquitic de Carmona</option>
+              <option value="Tancanhuitz">Tancanhuitz</option>
+              <option value="Xilitla">Xilitla</option>
+              <option value="Venado">Venado</option>
+              <option value="Salinas">Salinas</option>
+              <option value="Aquismón">Aquismón</option>
+              <option value="Cárdenas">Cárdenas</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-field">
+            <label for="inputCantidad">Cantidad (kg) *</label>
+            <input type="number" id="inputCantidad" min="0.1" step="0.1" />
+          </div>
+          <div class="form-field">
+            <label for="inputPrecio">Precio por kg ($MXN) *</label>
+            <input type="number" id="inputPrecio" min="0.01" step="0.01" />
+          </div>
+        </div>
+
+        <input type="hidden" id="inputEstado" value="San Luis Potosí" />
+
+        <div class="form-field">
+          <label for="inputDesc">Descripción</label>
+          <textarea id="inputDesc" rows="3" placeholder="Describe el material..."></textarea>
+        </div>
+
+        <button type="submit" class="btn-full teal" id="btnActualizar">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          Guardar cambios
+        </button>
+
+      </form>
+    </div>
+  </div>
+
+  <script src="js/publicaciones-editar.js"></script>
+</body>
+</html>

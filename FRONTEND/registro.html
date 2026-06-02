@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ECOMATCH — Crear Cuenta</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/pages.css" />
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-logo">
+        <div class="logo-icon">
+          <a href="index.html"><img src="assets/images/logo.png" alt="ECOMATCH" height="52" /></a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="auth-page">
+    <div class="auth-box" style="max-width:500px;">
+
+      <div class="auth-logo">
+        <img src="assets/images/logo.png" alt="ECOMATCH" />
+        <div class="sede-tag" style="justify-content:center;margin-top:10px;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          San Luis Potosí — Red de Reciclaje
+        </div>
+      </div>
+
+      <h2 class="auth-title">Crear Cuenta</h2>
+      <p class="auth-sub">Únete a la red de reciclaje de SLP</p>
+
+      <div id="alerta" class="alerta"></div>
+
+      <form onsubmit="event.preventDefault(); registro()">
+        <div class="form-row">
+          <div class="form-field">
+            <label for="inputNombre">Nombre completo *</label>
+            <div class="input-wrap">
+              <span class="input-icon">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              </span>
+              <input type="text" id="inputNombre" placeholder="Tu nombre" autofocus autocomplete="name" />
+            </div>
+          </div>
+          <div class="form-field">
+            <label for="inputEmpresa">Empresa / Organización</label>
+            <div class="input-wrap">
+              <span class="input-icon">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+              </span>
+              <input type="text" id="inputEmpresa" placeholder="Nombre de tu empresa" autocomplete="organization" />
+            </div>
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label for="inputEmail">Correo electrónico *</label>
+          <div class="input-wrap">
+            <span class="input-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </span>
+            <input type="email" id="inputEmail" placeholder="correo@empresa.com" autocomplete="email" />
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label for="inputPassword">Contraseña * <span style="color:var(--eco-muted);font-weight:400;">(mínimo 8 caracteres)</span></label>
+          <div class="input-wrap">
+            <span class="input-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </span>
+            <input type="password" id="inputPassword" placeholder="Crea una contraseña segura" autocomplete="new-password" />
+            <button type="button" class="toggle-pass" onclick="togglePass('inputPassword', this)" title="Mostrar/ocultar">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-field">
+            <label for="inputTipo">Tipo de usuario *</label>
+            <select id="inputTipo">
+              <option value="">Selecciona...</option>
+              <option value="vendedor">Vendedor de materiales</option>
+              <option value="comprador">Industria compradora</option>
+              <option value="centro">Centro de reciclaje</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="inputCiudad">Ciudad / Municipio</label>
+            <select id="inputCiudad">
+              <option value="">Selecciona...</option>
+              <option value="Rioverde">★ Rioverde (Sede Principal)</option>
+              <option value="San Luis Potosí">San Luis Potosí</option>
+              <option value="Soledad de Graciano Sánchez">Soledad de Graciano Sánchez</option>
+              <option value="Ciudad Valles">Ciudad Valles</option>
+              <option value="Matehuala">Matehuala</option>
+              <option value="Tamazunchale">Tamazunchale</option>
+              <option value="Ciudad Fernández">Ciudad Fernández</option>
+              <option value="Cedral">Cedral</option>
+              <option value="Charcas">Charcas</option>
+              <option value="Cerritos">Cerritos</option>
+              <option value="Ébano">Ébano</option>
+              <option value="Santa María del Río">Santa María del Río</option>
+              <option value="Villa de Reyes">Villa de Reyes</option>
+              <option value="Mexquitic de Carmona">Mexquitic de Carmona</option>
+              <option value="Tancanhuitz">Tancanhuitz</option>
+              <option value="Xilitla">Xilitla</option>
+              <option value="Venado">Venado</option>
+              <option value="Salinas">Salinas</option>
+              <option value="Aquismón">Aquismón</option>
+              <option value="Cárdenas">Cárdenas</option>
+              <option value="Otro municipio SLP">Otro municipio SLP</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Estado fijo: San Luis Potosí -->
+        <input type="hidden" id="inputEstado" value="San Luis Potosí" />
+
+        <button type="submit" class="btn-full" id="btnRegistro">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+          Crear cuenta gratis
+        </button>
+      </form>
+
+      <p class="auth-link" style="margin-top:18px;">¿Ya tienes cuenta? <a href="login.html">Inicia sesión aquí</a></p>
+      <p class="auth-link" style="margin-top:10px;"><a href="index.html">← Volver al inicio</a></p>
+    </div>
+  </div>
+
+  <script src="js/registro.js"></script>
+</body>
+</html>

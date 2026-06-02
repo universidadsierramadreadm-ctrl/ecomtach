@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ECOMATCH — Panel de Inicio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/pages.css" />
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-logo">
+        <div class="logo-icon">
+          <a href="index.html"><img src="assets/images/logo.png" alt="ECOMATCH" height="52" /></a>
+        </div>
+      </div>
+      <div class="module-nav">
+        <span class="module-nav-user">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span id="nombreUsuario"></span>
+        </span>
+        <button class="btn-nav-logout" onclick="cerrarSesion()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Cerrar sesión
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page-wrap">
+
+    <div id="alerta" class="alerta"></div>
+
+    <div id="spinnerWrap" class="spinner-wrap">
+      <div class="spinner"></div>
+      <p>Cargando panel...</p>
+    </div>
+
+    <div id="contenido" style="display:none;">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title" id="tituloBienvenida"></h1>
+          <p style="color:var(--eco-muted);font-size:14px;margin-top:4px;" id="fechaHora"></p>
+        </div>
+        <div class="sede-tag">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Rioverde, San Luis Potosí
+        </div>
+      </div>
+
+      <p class="section-sep">Módulos disponibles</p>
+      <div class="cards-grid" id="tarjetasModulos"></div>
+
+      <p class="section-sep">Resumen del sistema</p>
+      <div class="cards-grid" id="tarjetasResumen"></div>
+    </div>
+
+  </div>
+
+  <script src="js/inicio.js"></script>
+</body>
+</html>

@@ -95,6 +95,7 @@ exports.login = async (req, res) => {
       success: true,
       message: `¡Bienvenido de vuelta, ${user.nombre}!`,
       token,
+      nombre: user.nombre,
       user: { id: user.id, nombre: user.nombre, email: user.email, tipo_usuario: user.tipo_usuario, es_vip: user.es_vip }
     });
   } catch (err) {

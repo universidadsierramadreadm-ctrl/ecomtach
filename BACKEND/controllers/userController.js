@@ -7,43 +7,23 @@ const bcrypt = require('bcryptjs');
 // ── Página de inicio con estadísticas ──
 exports.getInicio = async (req, res) => {
   try {
-    // Obtener estadísticas generales
     const [[stats]] = await db.query(`
       SELECT
         (SELECT COUNT(*) FROM usuarios WHERE activo = 1) AS total_usuarios,
-        (SELECT COUNT(*) FROM publicaciones WHERE activo = 1) AS total_publicaciones,
-        (SELECT COUNT(*) FROM transacciones WHERE estado = 'completada') AS total_transacciones,
-        (SELECT COALESCE(SUM(monto_neto), 0) FROM transacciones WHERE estado = 'completada') AS volumen_total
+        (SELECT COUNT(*) FROM publicaciones WHERE activo = 1) AS total_publicaciones
     `);
-
-    // Obtener módulos disponibles
-    const modulos = [
-      { nombre: 'Autenticación', descripcion: 'Registro, login y gestión de usuarios', endpoints: ['POST /auth/register', 'POST /auth/login', 'GET /auth/me'] },
-      { nombre: 'Usuarios', descripcion: 'Perfiles, dashboards y administración', endpoints: ['GET /users/profile', 'GET /users/dashboard', 'GET /users/admin/list'] },
-      { nombre: 'Productos', descripcion: 'Catálogo de materiales reciclables', endpoints: ['GET /products', 'POST /products', 'PUT /products/:id'] },
-      { nombre: 'Pagos', descripcion: 'Sistema de transacciones y comisiones', endpoints: ['POST /payments/transaccion', 'GET /payments/history'] },
-      { nombre: 'VIP', descripcion: 'Planes premium y suscripciones', endpoints: ['GET /vip/planes', 'POST /vip/subscribe'] },
-      { nombre: 'Chat', descripcion: 'Mensajería entre usuarios', endpoints: ['GET /chat/conversations', 'POST /chat/send'] }
-    ];
-
-    const fechaActual = new Date().toLocaleString('es-MX', {
-      timeZone: 'America/Mexico_City',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
 
     res.json({
       success: true,
+      mensaje: 'Bienvenido al sistema',
+      fecha: new Date().toISOString(),
+      módulos: ['publicaciones', 'usuarios', 'pagos', 'vip', 'chat'],
+      resumen: {
+        total_usuarios: stats.total_usuarios,
+        total_publicaciones: stats.total_publicaciones
+      },
       sistema: 'ECOMATCH',
-      descripcion: 'Plataforma de comercio electrónico para materiales reciclables',
-      version: '1.0.0',
-      fecha_hora: fechaActual,
-      estadisticas: stats,
-      modulos: modulos,
-      mensaje: '¡Bienvenido a ECOMATCH! Conectando vendedores y compradores de materiales reciclables.'
+      version: '1.0.0'
     });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });

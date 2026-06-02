@@ -7,6 +7,7 @@ const auth    = require('../controllers/authController');
 const { protect, authLimiter } = require('./middleware');
 
 router.post('/register',         authLimiter, auth.register);
+router.post('/registro',         authLimiter, auth.register); // alias PDF
 router.post('/login',            authLimiter, auth.login);
 router.post('/logout',           protect, auth.logout);
 router.get('/me',                protect, auth.getMe);
